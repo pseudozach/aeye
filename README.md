@@ -1,9 +1,9 @@
-# Stxpredict
-## Prediction Market on Stacks
+# Aeye
+## Prediction Market on Aeternity
 
-Stxpredict is a proof of concept contract + web app that lets anyone create a prediction and set conditions to resolve it.
+Aeye is a prediction market that lets anyone create a prediction and set conditions to resolve it.
 
-Preview at: https://stxpredict.vercel.app
+Preview at: https://aeye.vercel.app
 Currently running on testnet.
 
 ### Build and Run:
