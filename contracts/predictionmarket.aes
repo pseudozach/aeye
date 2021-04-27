@@ -1,0 +1,99 @@
+include "List.aes"
+
+contract PredictionMarket =
+
+    type o = oracle(string, string)
+
+    record state = {
+        index : int, 
+        marketDatabase : map(int, market), 
+        testvalue: int}
+
+    record market = {
+        id : int,
+        question : string,
+        balance : int,
+        paypervote : int,
+        resolver : address,
+        yescount : int,
+        nocount : int,
+        resolveTime : int,
+        resolveType : string,
+        resolved : bool,
+        result : bool,
+        yesVoters : list(address),
+        noVoters : list(address)
+        }
+
+    stateful entrypoint init() = 
+        { index = 1,
+            marketDatabase = {},
+            testvalue = 42}
+        
+    stateful entrypoint createMarket(question: string, paypervote: int, resolver: address, resolveTime: int, resolveType: string) =
+            let new_market : market = {
+                id = state.index,
+                question = question,
+                balance = 0,
+                paypervote = paypervote,
+                resolver = resolver,
+                yescount = 0,
+                nocount = 0,
+                resolveTime = resolveTime,
+                resolveType = resolveType,
+                resolved = false,
+                result = false,
+                yesVoters = [],
+                noVoters = []}
+                    
+            put(state{marketDatabase[state.index] = new_market})
+            put(state{index = (state.index + 1)})
+            state.index
+
+    payable stateful entrypoint joinMarket(id: int, side: bool) =
+            require(marketExists(id), "Market does not exist")      
+            require(state.marketDatabase[id].paypervote =< Call.value, "insufficient payment to join the market")
+            put(state{marketDatabase[id].balance = (state.marketDatabase[id].balance + Call.value) })
+            if (side)
+                Call.caller :: state.marketDatabase[id].yesVoters
+                put(state{marketDatabase[id].yesVoters = (Call.caller :: state.marketDatabase[id].yesVoters)})
+                put(state{marketDatabase[id].yescount = (state.marketDatabase[id].yescount + 1) })
+            else
+                put(state{marketDatabase[id].noVoters = (Call.caller :: state.marketDatabase[id].noVoters)})
+                put(state{marketDatabase[id].nocount = (state.marketDatabase[id].nocount + 1) })
+
+    stateful entrypoint resolveMarket(id: int, result: bool) =
+            require(marketExists(id), "Market does not exist")      
+            require(state.marketDatabase[id].resolver == Call.caller, "caller can not resolve this market")
+            put(state{marketDatabase[id].balance = (state.marketDatabase[id].balance + Call.value) })
+            // resolve market
+            put(state{marketDatabase[id].result = result})
+            put(state{marketDatabase[id].resolved = true})
+            if (result)
+                let amount = state.marketDatabase[id].balance / state.marketDatabase[id].yescount
+                List.foreach(state.marketDatabase[id].yesVoters, (item) => payout(item, amount))
+                put(state{marketDatabase[id].balance = 0})
+            else
+                let amount = state.marketDatabase[id].balance / state.marketDatabase[id].nocount
+                List.foreach(state.marketDatabase[id].noVoters, (item) => payout(item, amount))
+                put(state{marketDatabase[id].balance = 0})
+
+    entrypoint marketExists(id: int) : bool =
+        Map.member(id, state.marketDatabase)
+
+    entrypoint getMarketQuestion(id: int) : string =
+        require(marketExists(id), "Market does not exist") 
+        state.marketDatabase[id].question
+
+    entrypoint getMarketBalance(id: int) : int =
+        require(marketExists(id), "Market does not exist") 
+        state.marketDatabase[id].balance
+
+    private stateful function payout(voter: address, amount: int) =
+        Chain.spend(voter, amount)
+
+    stateful entrypoint checkContractBalance(): int =
+        Contract.balance
+
+    stateful entrypoint paymeten() =
+        Chain.spend(Call.caller, 10)
