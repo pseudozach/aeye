@@ -53,12 +53,12 @@
 		  <!-- Submit button -->
 		  <!-- <fvl-submit>Validate</fvl-submit> -->
 
- <!--    	<button
+<!--     	<button
             type="button"
             class="btn-primary"
-            @click="setstuff"
+            @click="deployContract"
           >
-            set stuff
+            deploy!
       	</button> -->
 
   <!--     	<VueLoadingButton 
@@ -198,9 +198,12 @@ export default {
 		    userData: null,
 		    marketcount: 0,
 		    contractname: 'aepredict',
-		    dbref: 'aepredict',
+		    // dbref: 'aepredict', //testnet
+		    dbref: 'aepredict_mainnet',
 		    contractaddress: 'ct_fc3546zDYjvJzgkFKQCAErcShuRYPHLFwgW1o3RVd2wXS47nT',
 		    client: null,
+		    explorer_testnet: "https://explorer.testnet.aeternity.io/transactions/",
+		    explorer_mainnet: "https://explorer.aeternity.io/transactions/",
 		}
 	},
     components: {
@@ -242,7 +245,7 @@ export default {
 			thisthing.isLoading = false;
 
 			// console.log("adding to number of markets: ",  thisthing.marketcount);
-			const explorerTransactionUrl = "https://explorer.testnet.aeternity.io/transactions/"+data.txid.hash;
+			const explorerTransactionUrl = thisthing.explorer_mainnet+data.txid.hash;
 			var fbobj = {marketId: data.result-1, account: data.account, question: thisthing.form.question, paypervote: thisthing.form.paypervote, oracle: thisthing.form.oracle.trim(), txid: explorerTransactionUrl, resolveTime: thisthing.datetime, unixtime: thisthing.unixtime, resolveType:"manual", yescount: 0, nocount: 0, balance:0, resolved: false, result: false,  createdAt: firebase.database.ServerValue.TIMESTAMP};
 			console.log("fbobj ", fbobj);
 
@@ -264,13 +267,16 @@ export default {
     methods: {
     	async setupthings () {
     		let contractaddress = this.contractaddress
-    		const NODE_URL = 'https://testnet.aeternity.io/';
+    		//testnet
+    		// const NODE_URL = 'https://testnet.aeternity.io/';
+    		const NODE_URL = 'https://mainnet.aeternity.io/';
     		const NODE_INTERNAL_URL = 'http://127.0.0.1:3113'
 			const COMPILER_URL = 'https://compiler.aepps.com'
     		const node = await Node({ url: NODE_URL, internalUrl: NODE_INTERNAL_URL })
 			const SDKInstance = await Ae({
 			  nodes: [
-			    { name: 'testNet', instance: node },
+			    // { name: 'testNet', instance: node },
+			    { name: 'mainNet', instance: node },
 			  ],
 			  compilerUrl: 'COMPILER_URL',
 			  accounts: [acc],
@@ -308,9 +314,6 @@ export default {
 		// },
     	async createMarket(){
 			let thisthing = this
-    		// console.log("createMarket ", JSON.stringify(this.form), "datetime ", this.datetime, "useraddress ", this.userData.profile.stxAddress.testnet);
-    		// let unixtime = new Date(this.datetime).getTime()/1000;
-    		// console.log("unixtime ", unixtime);
     		// validate
     		if(thisthing.form.question == "" || thisthing.form.paypervote == "" || thisthing.form.oracle.trim() == "" || this.datetime == null || this.client == null){
     			// using options
@@ -367,6 +370,12 @@ export default {
 	        console.log("number of markets: ", data.length);
 
 	      });   
+	    },
+	    deployContract(){
+	    	console.log("deployContract triggered!");
+	  //   	const contractInstance = await SDKInstance.getContractInstance(CONTRACT_SOURCE) // contractAddress optional, only if interacting with existing contract
+			// const deploymentTransaction = await contractInstance.deploy([params], options)
+			EventBus.$emit('deploycontract', ["\"manual\""]);
 	    },
 	}
 }

@@ -4,7 +4,7 @@
     <div>
       <img alt="logo" src="./assets/icon.png">
       <h1>Aeye - Prediction Market on Aeternity</h1>
-      <p>Create and Resolve any market, manually or via oracles. (Testnet) </p>
+      <p>Create and Resolve any market, manually or via oracles. (Mainnet!) </p>
       <!-- <a href="https://github.com/pseudozach/aepredict" target="_blank">source code</a> -->
     </div>
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->

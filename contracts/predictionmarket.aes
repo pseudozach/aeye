@@ -94,6 +94,3 @@ contract PredictionMarket =
 
     stateful entrypoint checkContractBalance(): int =
         Contract.balance
-
-    stateful entrypoint paymeten() =
-        Chain.spend(Call.caller, 10)

@@ -245,12 +245,12 @@ export default {
     //     "createdAt": 1618876329677,
     //     "marketId": 2,
     //     "nocount": 0,
-    //     "oracle": "ST2507VNQZC9VBXM7X7KB4SF4QJDJRSWHG6ERHWB7",
+    //     "oracle": "asdasd",
     //     "paypervote": "1",
     //     "question": "test2",
     //     "resolveTime": "2021-04-24 04:52 pm",
     //     "resolveType": "manual",
-    //     "txid": "https://explorer.stacks.co/txid/${data.txId}?chain=testnet",
+    //     "txid": "https://explorer..co/txid/${data.txId}?chain=testnet",
     //     "unixtime": 1619308320,
     //     "yescount": 0,
     //     "vgt_id": 0,
@@ -258,9 +258,6 @@ export default {
     // }
     async joinMarket(marketobj){
       let thisthing = this
-      // console.log("joinMarket: ", JSON.stringify(marketobj), "useraddress ", this.userData.profile.stxAddress.testnet);
-      // let unixtime = new Date(this.datetime).getTime()/1000;
-      // console.log("unixtime ", unixtime);
       // validate
       if(marketobj.question == "" || marketobj.paypervote == "" || marketobj.oracle.trim() == "" || this.fatype == "nothing"){
         // using options
@@ -331,7 +328,7 @@ export default {
       },
     async exitMarket(marketobj){
       let thisthing = this
-      console.log("exitMarket: ", JSON.stringify(marketobj), "useraddress ", this.userData.profile.stxAddress.testnet);
+      // console.log("exitMarket: ", JSON.stringify(marketobj), "useraddress ", this.userData.profile..testnet);
       // let unixtime = new Date(this.datetime).getTime()/1000;
       // console.log("unixtime ", unixtime);
       // validate
@@ -353,7 +350,7 @@ export default {
 
       },
     fetchData() {
-      db.ref(this.contractname).on("value", snapshot => {
+      db.ref(this.dbref).on("value", snapshot => {
         if(snapshot.exists()){
           let data = snapshot.val();
           let messages = [];
@@ -383,14 +380,15 @@ export default {
   },
   data(){
     // console.log("data return this.rows: ", this.rows);
-    // {account: thisthing.userData.profile.stxAddress.testnet, question: thisthing.form.question, paypervote: thisthing.form.paypervote, oracle: thisthing.form.oracle.trim(), txid: "https://explorer.stacks.co/txid/${data.txId}?chain=testnet", resolveTime: unixtime, resolveType:"manual",  createdAt: firebase.database.ServerValue.TIMESTAMP}
+    // {account: thisthing.userData.profile.Address.testnet, question: thisthing.form.question, paypervote: thisthing.form.paypervote, oracle: thisthing.form.oracle.trim(), 
     return {
       isLoadingJoin: false,
       isLoadingResolve: false,
       isLoadingExit: false,
       fatype: 'nothing',
       userData: null,
-      dbref: 'aepredict',
+      // dbref: 'aepredict',
+      dbref: 'aepredict_mainnet',
       contractname: 'aepredict',
       columns: [
         // {

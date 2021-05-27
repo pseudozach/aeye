@@ -202,10 +202,16 @@
   import WalletDetector from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/wallet-detector'
   import BrowserWindowMessageConnection from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/connection/browser-window-message'
 
+  import Chain from '@aeternity/aepp-sdk/es/chain'
+// var chain = Chain()
+
+
   // Send wallet connection info to Aepp throug content script
   const TEST_NET_NODE_URL = 'https://testnet.aeternity.io'
   const MAIN_NET_NODE_INTERNAL_URL = 'https://mainnet.aeternity.io'
-  const COMPILER_URL = 'https://compiler.aepps.com'
+  // this gives unsupported network error!
+  // const COMPILER_URL = 'https://compiler.aepps.com'
+  const COMPILER_URL = 'https://latest.compiler.aepps.com'
 
   const errorAsField = async fn => {
     try {
@@ -241,7 +247,9 @@
         callResponse: null,
         walletName: null,
         onAccount: null,
-        accounts: []
+        accounts: [],
+        contractaddress_testnet: 'ct_2qpmwFed6vmmY1RaowN342e68MFCPoNb2ZFnL4g6WtnmC2qxV1',
+        contractaddress_mainnet: 'ct_2sjSz7mXt4Do8KwM2RzNawHS8FogUBJQdu3UJ8wcT5oor2MPUZ',
       }
     },
     filters: {
@@ -268,8 +276,24 @@
         // console.log("mounted eventbus createmarket inside aesignin: ", data);
         thisthing.resolveMarket(data);
       });
+      EventBus.$on('deploycontract', function(data){
+        // [ "asd", "100", "ok_24Rhws9bUiTwrLN8YBUjuTXBMvtxGAgnkRUWZv92jsJsXEFr68", NaN, "manual" ]
+        // console.log("mounted eventbus createmarket inside aesignin: ", data);
+
+        thisthing.deployContract(data);
+      });
     },
     methods: {
+      async deployContract (data) {
+        // let balance = await Chain.balance("ak_P3fcnnJo5fnJCGQZntkNHCKv9sKTu2ABDNVYShVmPtf1KnipR");
+        // console.log("balance: ", balance);
+
+        // console.log("deploying contract!");
+        // const contractIns = await this.client.getContractInstance(code)
+        // const result = await contractIns.deploy()
+        // var decoded = await result.decode('int');
+        // console.log("deployContract result, decoded: ", result, decoded)
+      },
       async createMarket (data) {
         let thisthing = this
 
@@ -282,7 +306,7 @@
         this.callResponse = await errorAsField((async () => {
           const result = await this.client.contractCall(
             // this.contractCode, this.deployResponse.result.address, method,  args
-            code, 'ct_2qpmwFed6vmmY1RaowN342e68MFCPoNb2ZFnL4g6WtnmC2qxV1', 'createMarket', data
+            code, thisthing.contractaddress_mainnet, 'createMarket', data
           )
           var decoded = await result.decode('int');
           console.log("createMarketresult, decoded: ", result, decoded)
@@ -312,7 +336,7 @@
         this.callResponse = await errorAsField((async () => {
           const result = await this.client.contractCall(
             // this.contractCode, this.deployResponse.result.address, method,  args
-            code, 'ct_2qpmwFed6vmmY1RaowN342e68MFCPoNb2ZFnL4g6WtnmC2qxV1', 'joinMarket', passobj.args, optionsobj
+            code, thisthing.contractaddress_mainnet, 'joinMarket', passobj.args, optionsobj
           )
           var decoded = await result.decode('int');
           console.log("joinMarketresult, decoded: ", result, decoded)
@@ -331,7 +355,7 @@
         this.callResponse = await errorAsField((async () => {
           const result = await this.client.contractCall(
             // this.contractCode, this.deployResponse.result.address, method,  args
-            code, 'ct_2qpmwFed6vmmY1RaowN342e68MFCPoNb2ZFnL4g6WtnmC2qxV1', 'resolveMarket', passobj.args
+            code, thisthing.contractaddress_mainnet, 'resolveMarket', passobj.args
           ).catch(function(e) {
             console.log("resolve error: ", e);
             EventBus.$emit('resolvemarketerror', e);
@@ -435,7 +459,7 @@
       this.client = await RpcAepp({
         name: 'aepredict',
         nodes: [
-          { name: 'ae_uat', instance: await Node({ url: TEST_NET_NODE_URL }) },
+          // { name: 'ae_uat', instance: await Node({ url: TEST_NET_NODE_URL }) },
           { name: 'ae_mainnet', instance: await Node({ url: MAIN_NET_NODE_INTERNAL_URL }) }
         ],
         compilerUrl: COMPILER_URL,
@@ -559,8 +583,9 @@ contract PredictionMarket =
     stateful entrypoint checkContractBalance(): int =
         Contract.balance
 
-    stateful entrypoint paymeten() =
-        Chain.spend(Call.caller, 10)
 `
 
+
+    // stateful entrypoint paymeten() =
+    //     Chain.spend(Call.caller, 10)
 </script>
