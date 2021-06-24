@@ -19,12 +19,15 @@
 		  <!-- Radio component with options -->
 		  <!-- <fvl-radio :checked.sync="form.pet" :options="{'cat': 'Cat', 'dog': 'Dog'}" label="Favorite pet" name="pet" /> -->
 
+		  <!-- oracles disabled temporarily -->
+		   <!-- 'ok_2NRBaMsgSDjZRFw4dU82KCqLa5W7aQdbJAzaFprTpjEGLAzroV': 'AE / EUR',  -->
+		   
 			<fvl-select
 			  label="Select Oracle"
 			  name="oracle"
 			  placeholder="--- Available Automatic Oracles ---"
 			  :allowEmpty="true"
-			  :options="{ 'ok_2NRBaMsgSDjZRFw4dU82KCqLa5W7aQdbJAzaFprTpjEGLAzroV': 'AE / EUR', 'ak_2kivZfjJdxUMpBzLvdd4a7vnRczNrTayJJDo5VF9Mke21ixx9v' : 'Manual Account'}"
+			  :options="{'ak_2kivZfjJdxUMpBzLvdd4a7vnRczNrTayJJDo5VF9Mke21ixx9v' : 'Manual Account'}"
 			  :selected.sync="form.oracle"
 			  style="margin: 10px;"
 			/>
