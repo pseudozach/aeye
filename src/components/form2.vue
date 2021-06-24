@@ -24,7 +24,7 @@
 			  name="oracle"
 			  placeholder="--- Available Automatic Oracles ---"
 			  :allowEmpty="true"
-			  :options="{ 'ok_24Rhws9bUiTwrLN8YBUjuTXBMvtxGAgnkRUWZv92jsJsXEFr68': 'AE / EUR', 'ak_2kivZfjJdxUMpBzLvdd4a7vnRczNrTayJJDo5VF9Mke21ixx9v' : 'Manual Account'}"
+			  :options="{ 'ok_2NRBaMsgSDjZRFw4dU82KCqLa5W7aQdbJAzaFprTpjEGLAzroV': 'AE / EUR', 'ak_2kivZfjJdxUMpBzLvdd4a7vnRczNrTayJJDo5VF9Mke21ixx9v' : 'Manual Account'}"
 			  :selected.sync="form.oracle"
 			  style="margin: 10px;"
 			/>

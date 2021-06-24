@@ -423,9 +423,12 @@
         return iframe.contentWindow
       },
       async connectToWallet (wallet) {
+        console.log("1connect to wallet..")
         await this.client.connectToWallet(await wallet.getConnection())
+        console.log("connect to wallet..", )
         this.accounts = await this.client.subscribeAddress('subscribe', 'connected')
         this.pub = await this.client.address()
+        console.log("connect to wallet..", pub)
         this.onAccount = this.pub
         EventBus.$emit('walletconnected', this.client);
         this.balance = await this.client.getBalance(this.pub)
@@ -437,6 +440,7 @@
       },
       async scanForWallets () {
         const handleWallets = async function ({ wallets, newWallet }) {
+          // console.log("handleWallets");
           newWallet = newWallet || Object.values(wallets)[0]
           if (confirm(`Do you want to connect to wallet ${newWallet.name}`)) {
             this.detector.stopScan()
@@ -479,6 +483,7 @@
       })
       this.height = await this.client.height()
       // Start looking for wallets
+      // console.log("start scanning")
       await this.scanForWallets()
     }
   }
