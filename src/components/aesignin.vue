@@ -423,12 +423,12 @@
         return iframe.contentWindow
       },
       async connectToWallet (wallet) {
-        console.log("1connect to wallet..")
+        // console.log("1connect to wallet..")
         await this.client.connectToWallet(await wallet.getConnection())
-        console.log("connect to wallet..", )
+        // console.log("connect to wallet..", )
         this.accounts = await this.client.subscribeAddress('subscribe', 'connected')
         this.pub = await this.client.address()
-        console.log("connect to wallet..", pub)
+        // console.log("connect to wallet..", pub)
         this.onAccount = this.pub
         EventBus.$emit('walletconnected', this.client);
         this.balance = await this.client.getBalance(this.pub)
